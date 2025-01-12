@@ -405,8 +405,33 @@ function rotateMatrix(matrix) {
  *  [2, 9, 5, 9]    => [2, 5, 9, 9]
  *  [-2, 9, 5, -3]  => [-3, -2, 5, 9]
  */
-function sortByAsc(/* arr */) {
-  throw new Error('Not implemented');
+function sortByAsc(arr) {
+  function partition(array, start, end) {
+    const farray = array;
+    const pivot = farray[end];
+    let i = start - 1;
+    for (let j = start; j <= end - 1; j += 1) {
+      if (farray[j] < pivot) {
+        i += 1;
+        const temp = farray[i];
+        farray[i] = farray[j];
+        farray[j] = temp;
+      }
+    }
+    i += 1;
+    const temp = farray[i];
+    farray[i] = farray[end];
+    farray[end] = temp;
+    return i;
+  }
+  function quickSort(array, start, end) {
+    if (start >= end) return;
+    const pivot = partition(array, start, end);
+    quickSort(array, start, pivot - 1);
+    quickSort(array, pivot + 1, end);
+  }
+  quickSort(arr, 0, arr.length - 1);
+  return arr;
 }
 
 /**
@@ -446,7 +471,11 @@ function sortByAsc(/* arr */) {
 function shuffleChar(str, iterations) {
   let arr = [];
   let strArr = str.split('');
-  for (let j = 0; j < iterations; j += 1) {
+  let output = '';
+  let newIterations = iterations;
+  for (let j = 0; j < newIterations; j += 1) {
+    if (output === str) newIterations = (newIterations % j) + j;
+    output = '';
     arr = [];
     let index = 0;
     for (let i = 0; i < str.length; i += 2) {
@@ -458,11 +487,11 @@ function shuffleChar(str, iterations) {
       index += 1;
     }
     strArr = arr;
+    for (let i = 0; i < str.length; i += 1) {
+      output += arr[i];
+    }
   }
-  let output = '';
-  for (let i = 0; i < str.length; i += 1) {
-    output += arr[i];
-  }
+
   return output;
 }
 
@@ -483,8 +512,25 @@ function shuffleChar(str, iterations) {
  * @param {number} number The source number
  * @returns {number} The nearest larger number, or original number if none exists.
  */
-function getNearestBigger(/* number */) {
-  throw new Error('Not implemented');
+function getNearestBigger(number) {
+  const arr = [];
+  let initNumber = number;
+  let n;
+  while (initNumber > 0) {
+    n = initNumber % 10;
+    arr.push(n);
+    initNumber = Math.floor(initNumber / 10);
+    if (arr[arr.length - 2] > n) break;
+  }
+  arr.sort();
+  for (let i = 0; i < arr.length; i += 1) {
+    if (arr[i] > n) {
+      initNumber = initNumber * 10 + Number(arr.splice(i, 1));
+      break;
+    }
+  }
+  for (let i = 0; i < arr.length; i += 1) initNumber = initNumber * 10 + arr[i];
+  return initNumber;
 }
 
 module.exports = {
